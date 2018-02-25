@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 public class MonsterGame {
 	JFrame frame;
 	GamePanel panel;
-	public static final int width1 = 500;
-	public static final int height1 = 500;
+	public static final int width1 = 1250;
+	public static final int height1 = 850;
 	
 	MonsterGame(){
 		frame = new JFrame();
@@ -25,3 +25,6 @@ public class MonsterGame {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }
+
+
+

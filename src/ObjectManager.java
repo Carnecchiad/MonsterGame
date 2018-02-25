@@ -5,13 +5,13 @@ public class ObjectManager {
 		ArrayList<Object> objects;
 		Player player;
 		
-		
 		public ObjectManager(){
 			objects = new ArrayList<Object>();
 		}
 		
 		public void addObject(Object o){
 			objects.add(o);
+			System.out.println(o + " succesfully added to manager!");
 		}
 		
 		public void update(){
@@ -26,6 +26,7 @@ public class ObjectManager {
 			for(int i = 0; i < objects.size(); i++){
 				Object o = objects.get(i);
 				o.draw(g);
+//				System.out.println("manager drawing object " + i);
 			}
 		}
 		
@@ -38,14 +39,13 @@ public class ObjectManager {
 			}
 		}
 		
-		public void checkCollision() {
-			for (int i = 0; i < objects.size(); i++) {
-				if (player.collisionBox.intersects(objects.get(i).collisionBox)) {
-					player.collision = true;
-				}
+		
+		
+		void spitArray()
+		{
+			for(Object o : objects)
+			{
+//				System.out.println(o);
 			}
-
 		}
-		
-		
 }
