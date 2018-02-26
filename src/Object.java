@@ -10,18 +10,18 @@ public class Object {
 	int width;
 	int height;
 	public boolean isAlive;
-	
-	public Object()
-	{
+
+	public Object() {
 		isAlive = true;
-		collisionBox = new Rectangle(x,y,width,height);
+		collisionBox = new Rectangle(x, y, width, height);
 	}
-	void update(){
-		collisionBox.setBounds(x,y,width,height);
+
+	void update() {
+		collisionBox.setBounds(x, y, width, height);
 	}
+
 	void draw(Graphics g) {
-		
+
 	}
-	
-	
+
 }

@@ -25,7 +25,7 @@ public class Enemy extends Object {
 		g.drawImage(sprite, x, y, null);
 	}
 
-	void giveStats(int hp, int attack, int magResist, int physResist,String name) {
+	void giveStats(int hp, int attack, int magResist, int physResist, String name) {
 		this.hp = hp;
 		this.attack = attack;
 		this.magResist = magResist;
@@ -33,9 +33,11 @@ public class Enemy extends Object {
 		this.name = name;
 	}
 
-	public String returnStats(){
-		return "HP: " + hp + " \nAttack: " + attack + " \nMagic Resistance: " + magResist + " \nPhysical Resistance: " + physResist;
+	public String returnStats() {
+		return "HP: " + hp + " \nAttack: " + attack + " \nMagic Resistance: " + magResist + " \nPhysical Resistance: "
+				+ physResist;
 	}
+
 	BufferedImage getImage() {
 		return sprite;
 	}

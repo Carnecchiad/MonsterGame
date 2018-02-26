@@ -172,15 +172,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// attack
 			if (myTurn) {
 				if (ans == 0) {
-					if(!(((combatPlayer.luck)%luckModifier) == 0)) {
-					battleEnemy.hp -= ((combatPlayer.strength) - battleEnemy.physResist);
-					JOptionPane.showMessageDialog(null,
-							"you attacked and did "
-									+ ((combatPlayer.dexterity) + (combatPlayer.strength) - battleEnemy.physResist)
-									+ " damage!");
+					if (!(((combatPlayer.luck) % luckModifier) == 0)) {
+						battleEnemy.hp -= ((combatPlayer.strength) - battleEnemy.physResist);
+						JOptionPane.showMessageDialog(null,
+								"you attacked and did "
+										+ ((combatPlayer.dexterity) + (combatPlayer.strength) - battleEnemy.physResist)
+										+ " damage!");
 					} else {
-						battleEnemy.hp -= 4*combatPlayer.luck;
-						JOptionPane.showMessageDialog(null, "You did " + 4*combatPlayer.luck + " damage, CRITICAL HIT, ALL LUCK NO SKILL!!");
+						battleEnemy.hp -= 4 * combatPlayer.luck;
+						JOptionPane.showMessageDialog(null,
+								"You did " + 4 * combatPlayer.luck + " damage, CRITICAL HIT, ALL LUCK NO SKILL!!");
 					}
 				} else if (ans == 1) {
 					friendCounters += 1;
@@ -290,7 +291,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						(finalBoss.width + 10), finalBoss.height + 10))) {
 					if (e.getKeyChar() == 'e') {
 						if (!bossUnlock) {
-							JOptionPane.showMessageDialog(null, "You're not quite ready for that yet, defeat all other members of Bitterleaf Co in order to enter.");
+							JOptionPane.showMessageDialog(null,
+									"You're not quite ready for that yet, defeat all other members of Bitterleaf Co in order to enter.");
 						}
 					}
 				}
@@ -545,7 +547,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			g.drawImage(battleBackground, 0, 0, 1250, 850, null);
 			g.drawImage(battleEnemy.getImage(), battleEnemy.x, battleEnemy.y, null);
 			g.drawImage(playerLeftImg, 900, 670, playerLeftImg.getWidth(), playerLeftImg.getHeight(), null);
-			if(combatPlayer.luck < 20) {
+			if (combatPlayer.luck < 20) {
 				luckModifier = 7;
 			} else if (combatPlayer.luck >= 20 && combatPlayer.luck <= 40) {
 				luckModifier = 3;

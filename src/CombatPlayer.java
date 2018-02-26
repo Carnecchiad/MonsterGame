@@ -1,13 +1,13 @@
 
-public class CombatPlayer extends Object{
+public class CombatPlayer extends Object {
 	int hp;
 	int juice;
 	int strength;
 	int dexterity;
 	int intelligence;
 	int luck;
-	CombatPlayer(int hp, int juice, int strength, int dexterity, int intelligence, int luck)
-	{
+
+	CombatPlayer(int hp, int juice, int strength, int dexterity, int intelligence, int luck) {
 		this.hp = hp;
 		this.juice = juice;
 		this.strength = strength;
@@ -15,11 +15,10 @@ public class CombatPlayer extends Object{
 		this.intelligence = intelligence;
 		this.luck = luck;
 	}
-	void update()
-	{
-		if(hp < 0)
-		{
-			
+
+	void update() {
+		if (hp < 0) {
+
 		}
 	}
 }
