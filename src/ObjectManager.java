@@ -35,7 +35,6 @@ public class ObjectManager {
 				if(!objects.get(i).isAlive){
 					objects.remove(i);
 				}
-				
 			}
 		}
 		

@@ -74,6 +74,11 @@ public class Player extends Object{
 		}
 		collisionBox.setBounds((int) dx + playerWidth/4, (int) dy, playerWidth/2, playerHeight);
 	}
+	void center()
+	{
+		dx = 605;
+		dy = 425;
+	}
 	void draw(Graphics g)
 	{
 		g.drawImage(currentImg,x,y,playerWidth,playerHeight,null);

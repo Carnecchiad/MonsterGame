@@ -18,4 +18,8 @@ public class Enemy extends Object{
 		super.draw(g);
 		g.drawImage(sprite, x, y, null);
 	}
+	BufferedImage getImage()
+	{
+		return sprite;
+	}
 }
