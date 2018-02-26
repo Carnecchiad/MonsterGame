@@ -57,7 +57,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	ObjectManager manager = new ObjectManager();
 	ObjectManager combatManager = new ObjectManager();
 	ObjectManager endManager = new ObjectManager();
-	
+
 	BufferedImage finishImage;
 	// loading images
 
@@ -161,69 +161,75 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	int friendCounters = 0;
 
 	public int giveOptions() {
-		if(CURRENT_STATE == COMBAT_STATE) {
-		int ans = 0;
-		int skill = 0;
-		String[] skills = { "Magic missle", "Pepper spray", "Can of purple flurp", "Chug jug", "BACK" };
-		String[] options = { "Fight", "Friend", "Item/Skill","Flee", "Check Enemy Stats" };
-		ans = JOptionPane.showOptionDialog(null, "What will you do?", battleEnemy.name + " attacks!",
-				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
-		// attack
-		if (myTurn) {
-			if (ans == 0) {
-				battleEnemy.hp -= ((combatPlayer.strength) - battleEnemy.physResist);
-				JOptionPane.showMessageDialog(null, "you attacked and did "
-						+ ((combatPlayer.dexterity) + (combatPlayer.strength) - battleEnemy.physResist) + " damage!");
-			} else if (ans == 1) {
-				friendCounters += 1;
-				if (friendCounters == battleEnemy.attack) {
+		if (CURRENT_STATE == COMBAT_STATE) {
+			int ans = 0;
+			int skill = 0;
+			String[] skills = { "Magic missle", "Pepper spray", "Can of purple flurp", "Chug jug", "BACK" };
+			String[] options = { "Fight", "Friend", "Item/Skill", "Flee", "Check Enemy Stats" };
+			ans = JOptionPane.showOptionDialog(null, "What will you do?", battleEnemy.name + " attacks!",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+			// attack
+			if (myTurn) {
+				if (ans == 0) {
+					battleEnemy.hp -= ((combatPlayer.strength) - battleEnemy.physResist);
 					JOptionPane.showMessageDialog(null,
-							battleEnemy.name + " has discovered the real name of life, they decide to be your friend");
-					player.center();
-					player.update();
-					CURRENT_STATE = WORLD_STATE;
-				}
-			} else if (ans == 2) {
-				skill = JOptionPane.showOptionDialog(null, "What item/skill will you use", "Items and skills",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, skills, null);
-				if (skill == 0) {
-					combatPlayer.juice -= 10;
-					battleEnemy.hp -= (combatPlayer.intelligence) * 2;
-					JOptionPane.showMessageDialog(null,
-							"Did " + ((2 * combatPlayer.intelligence) - battleEnemy.magResist) + " damage!");
-				} else if (skill == 1) {
-					pepperSpray -= 1;
-					battleEnemy.hp -= ((combatPlayer.intelligence) + combatPlayer.strength);
-					JOptionPane.showMessageDialog(null,
-							"Did " + (combatPlayer.intelligence + combatPlayer.strength) + " damage!");
-				} else if (skill == 2) {
-					if (combatPlayer.hp < 100) {
-						combatPlayer.hp += 20;
-						JOptionPane.showMessageDialog(null, "HP increased by 20");
-					} else {
-						JOptionPane.showMessageDialog(null, "You can't use that!");
+							"you attacked and did "
+									+ ((combatPlayer.dexterity) + (combatPlayer.strength) - battleEnemy.physResist)
+									+ " damage!");
+				} else if (ans == 1) {
+					friendCounters += 1;
+					if (friendCounters == battleEnemy.attack) {
+						JOptionPane.showMessageDialog(null, battleEnemy.name
+								+ " has discovered the real name of life, they decide to be your friend");
+						player.center();
+						player.update();
+						CURRENT_STATE = WORLD_STATE;
 					}
-				} else if (skill == 3) {
-					chugJugs -= 1;
-					combatPlayer.hp = 200;
-					combatPlayer.juice = 200;
-					JOptionPane.showMessageDialog(null, "HP and juice set to 200");
+				} else if (ans == 2) {
+					skill = JOptionPane.showOptionDialog(null, "What item/skill will you use", "Items and skills",
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, skills, null);
+					if (skill == 0) {
+						combatPlayer.juice -= 10;
+						battleEnemy.hp -= (combatPlayer.intelligence) * 2;
+						if (combatPlayer.juice > 0) {
+							JOptionPane.showMessageDialog(null,
+									"Did " + ((2 * combatPlayer.intelligence) - battleEnemy.magResist) + " damage!");
+						} else {
+							JOptionPane.showMessageDialog(null, "You don't have enough juice to use that!");
+						}
+					} else if (skill == 1) {
+						pepperSpray -= 1;
+						battleEnemy.hp -= ((combatPlayer.intelligence) + combatPlayer.strength);
+						JOptionPane.showMessageDialog(null,
+								"Did " + (combatPlayer.intelligence + combatPlayer.strength) + " damage!");
+					} else if (skill == 2) {
+						if (combatPlayer.hp < 100) {
+							combatPlayer.hp += 20;
+							JOptionPane.showMessageDialog(null, "HP increased by 20");
+						} else {
+							JOptionPane.showMessageDialog(null, "You can't use that!");
+						}
+					} else if (skill == 3) {
+						chugJugs -= 1;
+						combatPlayer.hp = 200;
+						combatPlayer.juice = 200;
+						JOptionPane.showMessageDialog(null, "HP and juice set to 200");
+					} else {
+						giveOptions();
+					}
+
+				} else if (ans == 3) {
+					JOptionPane.showMessageDialog(null, "You fled FlurpTopia for good, so long sucker");
+					System.exit(0);
+
 				} else {
-					giveOptions();
+					JOptionPane.showMessageDialog(null,
+							"HP: " + battleEnemy.hp + " \nAttack: " + battleEnemy.attack + " \nMagic Resistance: "
+									+ battleEnemy.magResist + " \nPhysical Resistance: " + battleEnemy.physResist);
+
 				}
-
-			} else if (ans == 3) {
-				JOptionPane.showMessageDialog(null, "You fled FlurpTopia for good, so long sucker");
-				System.exit(0);
-
-			} else {
-				JOptionPane.showMessageDialog(null,
-						"HP: " + battleEnemy.hp + " \nAttack: " + battleEnemy.attack + " \nMagic Resistance: "
-								+ battleEnemy.magResist + " \nPhysical Resistance: " + battleEnemy.physResist);
-				
 			}
-		}
-		return ans;
+			return ans;
 		}
 		return -1;
 	}
@@ -253,7 +259,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				System.exit(0);
-				
+
 			}
 		}
 
@@ -273,6 +279,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				player.right = true;
 			}
 
+			if (finalBoss.canInteract()) {
+				if (player.collisionBox.intersects(new Rectangle((finalBoss.x - 5), (finalBoss.y - 5),
+						(finalBoss.width + 10), finalBoss.height + 10))) {
+					if (e.getKeyChar() == 'e') {
+						if (!bossUnlock) {
+							JOptionPane.showMessageDialog(null, "You're not quite ready for that yet, defeat all other members of Bitterleaf Co in order to enter.");
+						}
+					}
+				}
+			}
 			if (bootGator.canInteract()) {
 				if (player.collisionBox.intersects(new Rectangle(375, 275, ((bootGatorImg.getWidth()) / 2) + 10,
 						((bootGatorImg.getHeight()) / 2) + 10))) {
@@ -358,15 +374,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 			while (battleEnemy.hp > 0) {
 				if (myTurn) {
-					if (giveOptions() == 4) {
-						
-					} else if (giveOptions() == 2) {
-						player.center();
-						player.update();
-						CURRENT_STATE = WORLD_STATE;
-						myTurn = false;
-				}else {
-						
+					int option = giveOptions();
+					if (option == 4) {
+
+					} else if (option == 2) {
+						// player.center();
+						// player.update();
+						// CURRENT_STATE = WORLD_STATE;
+						// myTurn = false;
+					} else {
+
 						myTurn = false;
 					}
 				} else {
@@ -374,32 +391,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						combatPlayer.hp -= battleEnemy.attack;
 						JOptionPane.showMessageDialog(null, "You took " + battleEnemy.attack + " damage!");
 						myTurn = true;
-						if(combatPlayer.hp<=0) {
-							JOptionPane.showMessageDialog(null,"you died lol you suck");
+						if (combatPlayer.hp <= 0) {
+							JOptionPane.showMessageDialog(null, "you died lol you suck");
 							System.exit(0);
 						}
 					} else {
 						combatPlayer.hp -= battleEnemy.attack * 2;
 						JOptionPane.showMessageDialog(null,
 								"You took " + battleEnemy.attack * 2 + " damage! Critical hit!");
-						if(combatPlayer.hp <= 0) {
-							JOptionPane.showMessageDialog(null,"you died lol you suck");
+						if (combatPlayer.hp <= 0) {
+							JOptionPane.showMessageDialog(null, "you died lol you suck");
 							System.exit(0);
 						}
 						myTurn = true;
 					}
 				}
 			}
-			
-			if(battleEnemy.hp <= 0 && battleEnemy == flurpPolitique) {
-				String[] options = {"Spare","Kill"};
-				int x = JOptionPane.showOptionDialog(null, "Spare him?", "Spare him?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
-				if(x == 0) {
+
+			if (battleEnemy.hp <= 0 && battleEnemy == flurpPolitique) {
+				String[] options = { "Spare", "Kill" };
+				int x = JOptionPane.showOptionDialog(null, "Spare him?", "Spare him?", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, null);
+				if (x == 0) {
 					finishImage = happyEnding;
-							CURRENT_STATE = END_STATE;
-				} else if( x == 1) {
+					CURRENT_STATE = END_STATE;
+				} else if (x == 1) {
 					finishImage = justice;
-							CURRENT_STATE = END_STATE;
+					CURRENT_STATE = END_STATE;
 				} else {
 					System.exit(0);
 				}
@@ -458,10 +476,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			g.drawImage(backgroundImg, 0, 0, 1250, 850, null);
 			manager.draw(g);
 
-			if(boss1defeat && boss2defeat && boss3defeat) {
-				if(spam<0) {
-					spam+=1;
-				JOptionPane.showMessageDialog(null, "The first three members of Bitterleaf Co have been disposed of, only the Flurp Politique remains, destroy him");
+			if (boss1defeat && boss2defeat && boss3defeat) {
+				if (spam < 0) {
+					spam += 1;
+					JOptionPane.showMessageDialog(null,
+							"The first three members of Bitterleaf Co have been disposed of, only the Flurp Politique remains, destroy him");
 				}
 				CURRENT_STATE = WORLD_STATE;
 				bossUnlock = true;
@@ -487,7 +506,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (player.collisionBox.intersects(boss2.collisionBox)) {
 				doCombat(purpleSlurper, secondBossImg);
 				myTurn = true;
-				purpleSlurper.giveStats(80 , 12, 4,4,"The Purple Slurper");
+				purpleSlurper.giveStats(80, 12, 4, 4, "The Purple Slurper");
 			}
 			if (player.collisionBox.intersects(boss3.collisionBox)) {
 				doCombat(bitterPuss, thirdBossImg);
@@ -496,7 +515,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 			if (player.collisionBox.intersects(finalBoss.collisionBox)) {
 				player.collide = true;
-				if(bossUnlock) {
+				finalBoss.canInteract = true;
+				if (bossUnlock) {
 					doCombat(flurpPolitique, finalBossImg);
 					myTurn = true;
 					flurpPolitique.giveStats(200, 20, 4, 5, "Flurp Politique");
@@ -525,7 +545,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 
 		if (CURRENT_STATE == END_STATE) {
-			g.drawImage(finishImage, 0,0, null);
+			g.drawImage(finishImage, 0, 0, null);
 		}
 	}
 }
