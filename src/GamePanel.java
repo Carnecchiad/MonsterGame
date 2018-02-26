@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	final int END_STATE = 3;
 	int CURRENT_STATE = MENU_STATE;
 
+	int luckModifier = 7;
 	int menuInt = 0;
 
 	Player player;
@@ -171,11 +172,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// attack
 			if (myTurn) {
 				if (ans == 0) {
+					if(!(((combatPlayer.luck)%luckModifier) == 0)) {
 					battleEnemy.hp -= ((combatPlayer.strength) - battleEnemy.physResist);
 					JOptionPane.showMessageDialog(null,
 							"you attacked and did "
 									+ ((combatPlayer.dexterity) + (combatPlayer.strength) - battleEnemy.physResist)
 									+ " damage!");
+					} else {
+						battleEnemy.hp -= 4*combatPlayer.luck;
+						JOptionPane.showMessageDialog(null, "You did " + 4*combatPlayer.luck + " damage, CRITICAL HIT, ALL LUCK NO SKILL!!");
+					}
 				} else if (ans == 1) {
 					friendCounters += 1;
 					if (friendCounters == battleEnemy.attack) {
@@ -539,7 +545,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			g.drawImage(battleBackground, 0, 0, 1250, 850, null);
 			g.drawImage(battleEnemy.getImage(), battleEnemy.x, battleEnemy.y, null);
 			g.drawImage(playerLeftImg, 900, 670, playerLeftImg.getWidth(), playerLeftImg.getHeight(), null);
-
+			if(combatPlayer.luck < 20) {
+				luckModifier = 7;
+			} else if (combatPlayer.luck >= 20 && combatPlayer.luck <= 40) {
+				luckModifier = 3;
+			} else if (combatPlayer.luck > 40) {
+				luckModifier = 1;
+			}
 			combatManager.update();
 
 		}
