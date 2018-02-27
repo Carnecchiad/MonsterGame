@@ -1,24 +1,29 @@
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class Meter extends Object {
 
-	int amnt;
-
-	public Meter(int x, int y, int width, int max, int base) {
+	int var;
+	Color c;
+	public Meter(int x, int y, int width, int height, int var,Color c) {
 		super();
+		this.c = c;
+		this.var = var;
 		this.x = x;
 		this.y = y;
 		this.width = width;
-		this.height = max;
-		amnt = base;
+		this.height = height;
 	}
-
+	void update() {
+		collisionBox.setBounds(x, y, width, height);
+		
+	}
 	void draw(Graphics g) {
-		g.drawRect(x, y, width, height);
-
-		g.fillRect(x, y, width, amnt);
-		if (amnt < 0) {
-			amnt = 0;
-		}
+		g.setColor(Color.BLACK);
+		g.fillRect(x - 2, y + 2, width + 4, -height -4);
+		g.setColor(c);
+		g.fillRect(x, y, width, -height);
+		
+		
 	}
 }

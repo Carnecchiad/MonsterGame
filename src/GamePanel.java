@@ -15,6 +15,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	final int WORLD_STATE = 1;
 	final int COMBAT_STATE = 2;
 	final int END_STATE = 3;
+	final int HELP_STATE = 4;
 	int CURRENT_STATE = MENU_STATE;
 
 	int luckModifier = 7;
@@ -23,6 +24,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Player player;
 	CombatPlayer combatPlayer;
 	Meter health;
+	Meter juice;
+	Meter enemyHealth;
 	Barrier bootGator;
 	Barrier bush1;
 	Barrier bush2;
@@ -42,6 +45,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Enemy battleEnemy;
 
 	boolean myTurn = true;
+	boolean flee = false;
 
 	int pepperSpray = 5;
 	int chugJugs = 1;
@@ -61,7 +65,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	BufferedImage finishImage;
 	// loading images
-
+	public static BufferedImage arrowImg;
+	public static BufferedImage controls;
 	public static BufferedImage happyEnding;
 	public static BufferedImage justice;
 	public static BufferedImage menuBackground;
@@ -86,9 +91,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	public GamePanel() {
 
-		combatPlayer = new CombatPlayer(50, 100, 10, 10, 10, 10);
+		combatPlayer = new CombatPlayer(80, 100, 10, 10, 10, 10);
 
 		try {
+			arrowImg = ImageIO.read(this.getClass().getResource("arrow.png"));
+			controls = ImageIO.read(this.getClass().getResource("controls.png"));
 			happyEnding = ImageIO.read(this.getClass().getResource("happyEnding.png"));
 			justice = ImageIO.read(this.getClass().getResource("justice.png"));
 			menuBackground = ImageIO.read(this.getClass().getResource("menuBackground.png"));
@@ -119,12 +126,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		bush1 = new Barrier(960, 110, 130, 100, null);
 		bush2 = new Barrier(940, 510, 140, 100, null);
 		flurpLake = new Barrier(170, 520, 260, 300, null);
-		health = new Meter(50, 1200, 40, 100, combatPlayer.hp);
+		health = new Meter(1100, 820, 50, 100, combatPlayer.hp, Color.RED);
+		juice = new Meter(1180, 820, 50, 100, combatPlayer.juice, Color.magenta);
 		boss1 = new Barrier(1230, 300, 20, 200, null);
 		boss2 = new Barrier(500, 830, 250, 20, null);
 		boss3 = new Barrier(0, 300, 20, 200, null);
 		finalBoss = new Barrier(500, 0, 250, 20, null);
+		enemyHealth = new Meter(40, 820, 50, 100, 1, Color.ORANGE);
 
+		manager.addObject(juice);
 		manager.addObject(boss1);
 		manager.addObject(boss2);
 		manager.addObject(boss3);
@@ -145,11 +155,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		bitterPuss = new Enemy(100, 620, bitterPussImg.getWidth(), bitterPussImg.getHeight(), bitterPussImg);
 		ambushBlob = new Enemy(100, 670, flurpGooImg.getWidth(), flurpGooImg.getHeight(), flurpGooImg);
 
+		combatManager.addObject(juice);
 		combatManager.addObject(ambushBlob);
 		combatManager.addObject(bitterPuss);
 		combatManager.addObject(flurpGator);
 		combatManager.addObject(purpleSlurper);
 		combatManager.addObject(flurpPolitique);
+		combatManager.addObject(health);
+		combatManager.addObject(enemyHealth);
 	}
 
 	public void doCombat(Enemy enemy, BufferedImage backdrop) {
@@ -159,13 +172,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		CURRENT_STATE = COMBAT_STATE;
 	}
 
+	public void stopCombat() {
+		battleEnemy.attack = 0;
+		CURRENT_STATE = WORLD_STATE;
+
+	}
+
 	int friendCounters = 0;
 
 	public int giveOptions() {
 		if (CURRENT_STATE == COMBAT_STATE) {
 			int ans = 0;
 			int skill = 0;
-			String[] skills = { "Magic missle", "Pepper spray", "Can of purple flurp", "Chug jug", "BACK" };
+			String[] skills = { "Magic missile", "Pepper spray", "Can of purple flurp", "Chug jug", "BACK" };
 			String[] options = { "Fight", "Friend", "Item/Skill", "Flee", "Check Enemy Stats" };
 			ans = JOptionPane.showOptionDialog(null, "What will you do?", battleEnemy.name + " attacks!",
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
@@ -185,12 +204,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					}
 				} else if (ans == 1) {
 					friendCounters += 1;
+					JOptionPane.showMessageDialog(null, "The friendship between you and the enemy is looking like a(n) "
+							+ friendCounters + "/" + battleEnemy.attack, "Friends", JOptionPane.WARNING_MESSAGE);
 					if (friendCounters == battleEnemy.attack) {
 						JOptionPane.showMessageDialog(null, battleEnemy.name
-								+ " has discovered the real name of life, they decide to be your friend");
-						player.center();
-						player.update();
-						CURRENT_STATE = WORLD_STATE;
+								+ " has discovered the real name of life, they decide to be your friend, but while they're not looking with the power of friendship you stab them in the back for 1000 damage");
+						battleEnemy.hp = 0;
+
 					}
 				} else if (ans == 2) {
 					skill = JOptionPane.showOptionDialog(null, "What item/skill will you use", "Items and skills",
@@ -201,6 +221,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						if (combatPlayer.juice > 0) {
 							JOptionPane.showMessageDialog(null,
 									"Did " + ((2 * combatPlayer.intelligence) - battleEnemy.magResist) + " damage!");
+							myTurn = false;
 						} else {
 							JOptionPane.showMessageDialog(null, "You don't have enough juice to use that!");
 						}
@@ -209,10 +230,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						battleEnemy.hp -= ((combatPlayer.intelligence) + combatPlayer.strength);
 						JOptionPane.showMessageDialog(null,
 								"Did " + (combatPlayer.intelligence + combatPlayer.strength) + " damage!");
+						myTurn = false;
 					} else if (skill == 2) {
 						if (combatPlayer.hp < 100) {
 							combatPlayer.hp += 20;
 							JOptionPane.showMessageDialog(null, "HP increased by 20");
+							myTurn = false;
 						} else {
 							JOptionPane.showMessageDialog(null, "You can't use that!");
 						}
@@ -221,13 +244,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						combatPlayer.hp = 200;
 						combatPlayer.juice = 200;
 						JOptionPane.showMessageDialog(null, "HP and juice set to 200");
+						myTurn = false;
 					} else {
 						giveOptions();
 					}
 
 				} else if (ans == 3) {
-					JOptionPane.showMessageDialog(null, "You fled FlurpTopia for good, so long sucker");
-					System.exit(0);
+					flee = true;
+					battleEnemy.hp = 0;
 
 				} else {
 					JOptionPane.showMessageDialog(null,
@@ -244,13 +268,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 
+		if (CURRENT_STATE == HELP_STATE) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
+				CURRENT_STATE = WORLD_STATE;
+			}
+		}
 		if (CURRENT_STATE == MENU_STATE) {
-
+			
 			if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
 				if (menuInt == 0) {
 					CURRENT_STATE = WORLD_STATE;
 				} else if (menuInt == 1) {
-
+					CURRENT_STATE = HELP_STATE;
 				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -272,6 +301,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 		if (CURRENT_STATE == WORLD_STATE) {
 
+			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				CURRENT_STATE = HELP_STATE;
+			}
+			juice.height = combatPlayer.juice;
+			health.height = combatPlayer.hp;
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
 				player.up = true;
 				// System.out.println("up key detected");
@@ -379,7 +413,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 
 		if (CURRENT_STATE == COMBAT_STATE) {
-
+		
+			juice.height = combatPlayer.juice;
+			health.height = combatPlayer.hp;
 			while (battleEnemy.hp > 0) {
 				if (myTurn) {
 					int option = giveOptions();
@@ -394,13 +430,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 						myTurn = false;
 					}
-				} else {
+				} else if (battleEnemy.attack > 0) {
+
 					if ((int) (Math.random() * 10) % 7 != 0) {
 						combatPlayer.hp -= battleEnemy.attack;
 						JOptionPane.showMessageDialog(null, "You took " + battleEnemy.attack + " damage!");
 						myTurn = true;
 						if (combatPlayer.hp <= 0) {
-							JOptionPane.showMessageDialog(null, "you died lol you suck");
+							JOptionPane.showMessageDialog(null, "you died, don't give up!");
 							System.exit(0);
 						}
 					} else {
@@ -408,7 +445,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						JOptionPane.showMessageDialog(null,
 								"You took " + battleEnemy.attack * 2 + " damage! Critical hit!");
 						if (combatPlayer.hp <= 0) {
-							JOptionPane.showMessageDialog(null, "you died lol you suck");
+							JOptionPane.showMessageDialog(null, "you died, don't give up!");
 							System.exit(0);
 						}
 						myTurn = true;
@@ -430,7 +467,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					System.exit(0);
 				}
 			}
-			JOptionPane.showMessageDialog(null, "You WON! you got " + awardedDice + " dice!");
+			if (!flee) {
+				JOptionPane.showMessageDialog(null, "You WON! you got " + awardedDice + " dice!");
+				dice += awardedDice;
+			}
 			if (battleEnemy == flurpGator) {
 				boss1defeat = true;
 			} else if (battleEnemy == bitterPuss) {
@@ -438,7 +478,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			} else if (battleEnemy == purpleSlurper) {
 				boss3defeat = true;
 			}
-			dice += awardedDice;
+
 			player.center();
 			player.update();
 			CURRENT_STATE = WORLD_STATE;
@@ -473,10 +513,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	public void paintComponent(Graphics g) {
 
+		if (CURRENT_STATE == HELP_STATE) {
+			repaint();
+			g.drawImage(controls, 0, 0, null);
+		}
 		if (CURRENT_STATE == MENU_STATE) {
 			repaint();
 			g.drawImage(menuBackground, 0, 0, null);
-
+			if(menuInt == 0) {
+				g.drawImage(arrowImg,800,550,null);
+			} else if (menuInt == 1) {
+				g.drawImage(arrowImg,870,730,null);
+			}
 		}
 		if (CURRENT_STATE == WORLD_STATE) {
 			repaint();
@@ -545,6 +593,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			repaint();
 
 			g.drawImage(battleBackground, 0, 0, 1250, 850, null);
+
 			g.drawImage(battleEnemy.getImage(), battleEnemy.x, battleEnemy.y, null);
 			g.drawImage(playerLeftImg, 900, 670, playerLeftImg.getWidth(), playerLeftImg.getHeight(), null);
 			if (combatPlayer.luck < 20) {
@@ -555,7 +604,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				luckModifier = 1;
 			}
 			combatManager.update();
-
+			health.draw(g);
+			health.height = combatPlayer.hp;
+			juice.draw(g);
+			juice.height = combatPlayer.juice;
+			enemyHealth.draw(g);
+			enemyHealth.height = battleEnemy.hp;
 		}
 
 		if (CURRENT_STATE == END_STATE) {
