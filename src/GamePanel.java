@@ -531,7 +531,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			manager.update();
 			g.drawImage(backgroundImg, 0, 0, 1250, 850, null);
 			manager.draw(g);
-
+			
 			if (boss1defeat && boss2defeat && boss3defeat) {
 				if (spam < 0) {
 					spam += 1;
@@ -593,7 +593,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			repaint();
 
 			g.drawImage(battleBackground, 0, 0, 1250, 850, null);
-
 			g.drawImage(battleEnemy.getImage(), battleEnemy.x, battleEnemy.y, null);
 			g.drawImage(playerLeftImg, 900, 670, playerLeftImg.getWidth(), playerLeftImg.getHeight(), null);
 			if (combatPlayer.luck < 20) {
@@ -610,6 +609,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			juice.height = combatPlayer.juice;
 			enemyHealth.draw(g);
 			enemyHealth.height = battleEnemy.hp;
+		
 		}
 
 		if (CURRENT_STATE == END_STATE) {
