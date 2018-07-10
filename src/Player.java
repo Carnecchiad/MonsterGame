@@ -28,7 +28,7 @@ public class Player extends Object {
 
 		dx = x;
 		dy = y;
-		speed = 0.5;
+		speed = 2;
 
 		up = false;
 		down = false;

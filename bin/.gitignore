@@ -7,9 +7,11 @@
 /Object.class
 /ObjectManager.class
 /Player.class
+/arrow.png
 /background.png
 /bitterPuss.png
 /bootGator.png
+/controls.png
 /finalBossArena.png
 /firstBossArena.png
 /flurpGator.png
@@ -26,5 +28,3 @@
 /rpgBackground.png
 /secondBossArena.png
 /thirdBossFight.png
-/controls.png
-/arrow.png
